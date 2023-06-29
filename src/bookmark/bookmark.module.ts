@@ -5,4 +5,4 @@ import { BookMarkService } from "./bookmark.service";
     controllers:[BookMarkController],
     providers:[BookMarkService],
 })
-export class AuthModule{}
+export class BookMarkModule{}
