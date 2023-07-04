@@ -5,6 +5,7 @@ import { BookMarkModule } from './bookmark/bookmark.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [
@@ -17,5 +18,6 @@ import { UserModule } from './user/user.module';
     UserModule
   ],
   controllers: [UserController],
+  providers: [PrismaService],
 })
 export class AppModule {}

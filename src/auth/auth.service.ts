@@ -26,7 +26,7 @@ export class AuthService {
         },
       });
       // return the saved user
-      return this.sinToken(user.id,user.email);
+      return this.signToken(user.id,user.email);
     } catch (error) {
 
       if (error instanceof PrismaClientKnownRequestError) {
@@ -66,23 +66,21 @@ export class AuthService {
     };
     //send back the user
     delete user.hash;
-    return this.sinToken(user.id,user.email);
+    return this.signToken(user.id,user.email);
   }
 
-  async sinToken(userId:number,email:string):Promise<{access_token:string}>{
-    const payload={
-      sub:userId,
-      email
+  async signToken(userId: number, email: string): Promise<{ access_token: string }> {
+    const payload = {
+      sub: userId,
+      email,
     };
-    const secret=this.config.get('JWT_SECRET');
-    const token= await this.jwt.signAsync(
-      payload,{
-        expiresIn:'15m',
-        secret:secret
-      }
-    );
+    const secret = this.config.get('JWT_SECRET');
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '15m',
+      secret,
+    });
     return {
-      access_token:token
-    }
+      access_token: token,
+    };
   }
 }

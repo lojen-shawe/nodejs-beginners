@@ -13,4 +13,10 @@ export class PrismaService extends PrismaClient {
             }
         });
     }
+    onDelete(){
+        return this.$transaction([
+            this.bookMark.deleteMany(),
+            this.user.deleteMany(),
+        ])
+    }
 }
