@@ -75,7 +75,7 @@ describe('App e2e', () => {
           email:'lojen@hotmail.com',
           firstName:'lojen',
         };
-        return pactum.spec().post('/users').withHeaders({Authorization:'Bearer $S{userAt}'}).withBody(dto).expectStatus(200).inspect();
+        return pactum.spec().post('/users').withHeaders({Authorization:'Bearer $S{userAt}'}).withBody(dto).expectStatus(200).expectBodyContains(dto.firstName).expectBodyContains(dto.email).inspect();
       });
     });
   });
