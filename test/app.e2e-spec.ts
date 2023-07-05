@@ -6,6 +6,7 @@ import * as pactum from 'pactum';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from 'src/auth/dto';
 import { EditUserDto } from 'src/user/dto';
+import { CreateBookmarkDto, EditBookmarkDto } from 'src/bookmark/dto';
 
 describe('App e2e', () => {
   let app : INestApplication;
@@ -80,11 +81,53 @@ describe('App e2e', () => {
     });
   });
   describe('Bookmarks',()=>{
-    describe('Create bookmark',()=>{});
-    describe('Get bookmark',()=>{});
-    describe('Get bookmark by id',()=>{});
-    describe('Edit bookmark by id',()=>{});
-    describe('Delete bookmark by id',()=>{});
+    describe('Get empty bookmark',()=>{
+      it('should get bookmarks',()=>{
+        return pactum.spec().get('/bookmarks').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBody([]);
+     
+      })
+    });
+    describe('Create bookmark',()=>{
+     const dto:CreateBookmarkDto={
+      title:'First bookmark',
+      link:'https://stackoverflow.com/questions/68246739/prismaclientvalidationerror-invalid-prisma-user-create-invocation'
+     }
+      it('should create bookmark',()=>{
+        return pactum.spec.post('/bookmark').withHeaders({Authorization:'Bearer $S{userAt}'}).withBody(dto).expectStatus(201).expectBody([]).stores('bookmarkId','id').inspect();
+      })
+    });
+    describe('Get bookmarks',()=>{
+      it('should get bookmarks',()=>{
+        return pactum.spec().get('/bookmarks').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectJsonLength(1);
+     
+      })
+    });
+    describe('Get bookmark by id',()=>{
+      it('should get bookmark by id',()=>{
+        return pactum.spec().getBookmarkById('/bookmarks/{id}').withPathParams('id','$S{bookmarkId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectBodyContains('$S{bookmarkId}');
+     
+      })
+    });
+    describe('Edit bookmark by id',()=>{
+      const dto : EditBookmarkDto={
+        title:'PrismaClientValidationError: Invalid prisma.user.create() invocation:',
+        description:'I am trying to create an API using Next.js & Prisma. I have two model user & profile. I want to create user & also profile field from req.body using postman.'
+      };
+      it('should edit bookmark by id',()=>{
+        return pactum.spec().Patch('/bookmarks/{id}').withPathParams('id','$S{bookmarkId}').withHeaders({Authorization:'Bearer $S{userAt}'}).withBody(dto).expectStatus(200).expectBodyContains(dto.title).expectBodyContains(dto.description).inspect();
+     
+      })
+    });
+    describe('Delete bookmark by id',()=>{
+      it('should delete bookmark by id',()=>{
+        return pactum.spec().delete('/bookmarks/{id}').withPathParams('id','$S{bookmarkId}').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(204).inspect();
+     
+      });
+      it('should get empty bookmarks',()=>{
+        return pactum.spec().get('/bookmarks').withHeaders({Authorization:'Bearer $S{userAt}'}).expectStatus(200).expectJsonLength(0);
+     
+      });
+    });
 
 
   });
